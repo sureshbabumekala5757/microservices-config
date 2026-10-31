@@ -9,3 +9,44 @@ eureka:
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 15
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      customerService:
+        registerHealthIndicator: true
+
+        # Number of calls considered in the sliding window
+        slidingWindowSize: 4
+        slidingWindowType: COUNT_BASED
+
+        # Minimum calls required before calculating failure rate
+        minimumNumberOfCalls: 4
+
+        # Open circuit when 50% or more calls fail
+        failureRateThreshold: 50
+
+        # Keep circuit OPEN for 10 seconds
+        waitDurationInOpenState: 10s
+
+        # Allow 2 trial calls in HALF_OPEN
+        permittedNumberOfCallsInHalfOpenState: 2
+
+        # Move to HALF_OPEN automatically after the wait period
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+        # Record failed calls
+        recordExceptions:
+          - feign.RetryableException
+
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers,circuitbreakerevents
+
+  endpoint:
+    health:
+      show-details: always
