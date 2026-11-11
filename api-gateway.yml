@@ -1,5 +1,22 @@
 server:
-  port: 8081
+  port: 6666
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: customer-service
+              uri: lb://CUSTOMER-SERVICE
+              predicates:
+                - Path=/customers/**
+
+            - id: consumer-service
+              uri: lb://CONSUMER-SERVICE
+              predicates:
+                - Path=/consumer/**
+
 
 eureka:
   client:
@@ -9,3 +26,4 @@ eureka:
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 15
+    
