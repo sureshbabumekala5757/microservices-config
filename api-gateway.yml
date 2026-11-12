@@ -7,6 +7,21 @@ spring:
       server:
         webflux:
           routes:
+            # Customer Swagger
+            - id: customer-swagger
+              uri: lb://CUSTOMER-SERVICE
+              predicates:
+                - Path=/customer/v3/api-docs
+              filters:
+                - StripPrefix=1
+
+            # Consumer Swagger
+            - id: consumer-swagger
+              uri: lb://CONSUMER-SERVICE
+              predicates:
+                - Path=/consumer/v3/api-docs
+              filters:
+                - StripPrefix=1
             - id: customer-service
               uri: lb://CUSTOMER-SERVICE
               predicates:
@@ -17,7 +32,18 @@ spring:
               predicates:
                 - Path=/consumer/**
 
-
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Customer Service
+        url: /customer/v3/api-docs
+      - name: Consumer Service
+        url: /consumer/v3/api-docs
+      - name: API Gateway
+        url: /v3/api-docs
+    urls-primary-name: Customer Service
+    
+    
 eureka:
   client:
     service-url:
